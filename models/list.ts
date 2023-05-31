@@ -18,9 +18,21 @@ const listSchema = new Schema(
       type: String,
       required: [true, 'Minute is required.']
     },
+    driverID: {
+      type: String,
+      required: [true, 'Driver ID is required.']
+    },
+    carNumber: {
+      type: String,
+      required: [true, 'Car number is required.']
+    },
     s: {
       type: String,
       required: [true, 'Second is required.']
+    },
+    time: {
+      type: String,
+      required: [true, 'time is required']
     },
     products: {
       type: String,

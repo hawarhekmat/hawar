@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useToast } from "@chakra-ui/react";
@@ -13,60 +13,32 @@ const NewList = () => {
   const [selectedProducts, setSelectedProducts] = useState("select");
   const [loading, setLoading] = useState(false);
   const [loadingProducts, setLoadingProducts] = useState(false);
-  const [list, setList] = useState<{
-    driverNames: string[];
-    product: string;
-    company: string;
-  }>({
-    driverNames: [],
-    product: "",
-    company: "",
-  });
+  const [creating, setCreating] = useState(false);
+  const [driverID, setID] = useState<{ id: string }>({ id: "" });
+  const [filter, setFilter] = useState("");
   const router = useRouter();
   const toast = useToast();
+
+  const inputRef = useRef<HTMLInputElement>();
+
+  const handleDriverID = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: string
+  ) => {
+    setID((prev) => ({
+      ...prev,
+      [id]: e.target.value,
+    }));
+  };
+  const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilter(e.target.value);
+  };
 
   const handleCompanyChange = async (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setSelectedCompany(e.target.value);
-    addCompanyToList(e.target.value);
     getDrivers(e.target.value);
-  };
-
-  const addNameToList = (name: string) => {
-    if (selectedCompany === "select" || selectedProducts === "select") {
-      toast({
-        title: "Alert",
-        description: "Please select product and company.",
-        status: "info",
-        duration: 9000,
-        isClosable: true,
-        position: "bottom-right",
-      });
-      return;
-    }
-    const res = list.driverNames.findLast((d) => d === name);
-    if (res != undefined) return;
-    const updatedObj = { ...list, driverNames: [...list.driverNames, name] };
-    setList(updatedObj);
-  };
-
-  const addCompanyToList = (company: string) => {
-    const updatedObj = { ...list, company };
-    setList(updatedObj);
-  };
-
-  const removeNameFromList = (name: string) => {
-    const updatedObj = {
-      ...list,
-      driverNames: list.driverNames.filter((n) => n !== name),
-    };
-    setList(updatedObj);
-  };
-
-  const addProductToList = (product: string) => {
-    const updatedObj = { ...list, product };
-    setList(updatedObj);
   };
 
   const getDrivers = async (company: string) => {
@@ -107,10 +79,25 @@ const NewList = () => {
 
   const handleChangeProduct = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedProducts(e.target.value);
-    addProductToList(e.target.value);
   };
 
-  const handleCreate = async () => {
+  const handleCreate = async (
+    driverName: string,
+    number: string,
+    id: string
+  ) => {
+    if (driverID[id] === "" || driverID[id] === undefined) {
+      toast({
+        title: "Alert",
+        description: "Please add driver ID.",
+        status: "info",
+        duration: 9000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+      return;
+    }
+
     if (selectedCompany === "select" || selectedProducts === "select") {
       toast({
         title: "Alert",
@@ -122,19 +109,7 @@ const NewList = () => {
       });
       return;
     }
-
-    if (list.driverNames.length < 0) {
-      toast({
-        title: "Alert",
-        description: "Please select at least one driver.",
-        status: "info",
-        duration: 9000,
-        isClosable: true,
-        position: "bottom-right",
-      });
-      return;
-    }
-
+    setCreating(true);
     try {
       const res = await fetch("/api/create-list", {
         method: "POST",
@@ -143,13 +118,16 @@ const NewList = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company: list.company,
-          drivers: list.driverNames,
-          product: list.product,
+          company: selectedCompany,
+          drivers: driverName,
+          product: selectedProducts,
+          driverID: driverID[id],
+          carNumber: number,
         }),
       });
 
       if (!res.ok) {
+        setCreating(false);
         toast({
           title: "Alert",
           description: "There was an error while creating driver.",
@@ -160,8 +138,10 @@ const NewList = () => {
         });
         return;
       }
+      setCreating(false);
       router.replace("/");
     } catch (error) {
+      setCreating(false);
       toast({
         title: "Alert",
         description: `${error}`,
@@ -244,16 +224,15 @@ const NewList = () => {
   }, []);
 
   return (
-    <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-4 rounded shadow bg-slate-100 my-6">
+    <div dir="rtl" className="my-5">
       <div>
         <h1 className="text-2xl font-semibold my-3">Create a new list.</h1>
         {loading ? (
           <h1>Loading companies</h1>
         ) : companies?.length! > 0 ? (
           <div>
-            <h1>Company</h1>
             <select
-              className="p-2 rounded w-full block my-3 lg:max-w-fit "
+              className="p-2 bg-slate-200 rounded w-full block my-3"
               value={selectedCompany}
               onChange={handleCompanyChange}
             >
@@ -282,9 +261,8 @@ const NewList = () => {
           <h1>Loading products</h1>
         ) : products?.length! > 0 ? (
           <div>
-            <h1>Product</h1>
             <select
-              className="p-2 rounded my-3 w-full block lg:max-w-fit "
+              className="p-2 bg-slate-200 rounded my-3 w-full block"
               value={selectedProducts}
               onChange={handleChangeProduct}
             >
@@ -318,62 +296,85 @@ const NewList = () => {
               one.
             </h1>
           )}
-          {drivers?.length! > 0 && <h1>Select drivers</h1>}
           {drivers?.length! > 0 && (
-            <ul className="grid gap-5 grid-cols-1 md:grid-cols-2">
-              {drivers?.map((d: any) => (
-                <li
-                  className={`my-1 ${
-                    list.driverNames.includes(d.name)
-                      ? "bg-green-100"
-                      : "bg-slate-200"
-                  } rounded shadow-sm p-2`}
-                  key={d._id}
-                >
-                  <h1 className="text-lg font-semibold">{d.name}</h1>
-                  <ul className="flex flex-row my-2 gap-3">
-                    <li>
-                      <button
-                        onClick={() => {
-                          addNameToList(d.name);
-                        }}
-                        type="button"
-                      >
-                        Add
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        onClick={() => {
-                          removeNameFromList(d.name);
-                        }}
-                        type="button"
-                      >
-                        Remove
-                      </button>
-                    </li>
-                  </ul>
-                </li>
-              ))}
-            </ul>
+            <input
+              className="w-full bg-slate-200 border-none outline-none p-2 rounded"
+              type="text"
+              value={filter}
+              onChange={handleFilter}
+              placeholder="Search for driver"
+            />
           )}
         </div>
       </div>
-      {list.company != "" && (
-        <div className="order-first md:order-last">
-          <h1 className="text-2xl font-semibold my-3">List info</h1>
-          <h1>Company: {list?.company}</h1>
-          <p>Product: {list?.product}</p>
-          <small>Drivers: {list?.driverNames.join(", ")}</small>
-          {list.driverNames.length > 0 ? (
-            <button
-              onClick={handleCreate}
-              type="button"
-              className="block my-2 rounded p-1 bg-slate-200"
-            >
-              Create
-            </button>
-          ) : null}
+      {drivers?.length! > 0 && (
+        <div className="mt-5">
+          <table className="border-collapse w-full border border-slate-800">
+            <thead>
+              <tr>
+                <th className="border py-2 px-4 bg-slate-100 text-black/70">
+                  Driver Name
+                </th>
+                <th className="border py-2 px-4 bg-slate-100 text-black/70">
+                  Driver City
+                </th>
+                <th className="border py-2 px-4 bg-slate-100 text-black/70">
+                  Driver Car Number
+                </th>
+                <th className="border py-2 px-4 bg-slate-100 text-black/70">
+                  Driver Company
+                </th>
+                <th className="border py-2 px-4 bg-slate-100 text-black/70">
+                  Driver Queue
+                </th>
+                <th className="border py-2 px-4 bg-slate-100 text-black/70">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {drivers
+                ?.filter((d: any) => d.carNumber.includes(filter))
+                .map((dr: any, index: number) => (
+                  <tr key={dr._id}>
+                    <td className="border border-slate-300 px-4 py-2">
+                      {dr.name}
+                    </td>
+                    <td className="border border-slate-300 px-4 py-2">
+                      {dr.city}
+                    </td>
+                    <td className="border border-slate-300 px-4 py-2">
+                      {dr.carNumber}
+                    </td>
+                    <td className="border border-slate-300 px-4 py-2">
+                      {dr.company}
+                    </td>
+                    <td className="border text-center border-slate-300 px-4 py-2">
+                      <input
+                        key={dr._id}
+                        value={driverID[dr._id] || ""}
+                        onChange={(e) => handleDriverID(e, dr._id)}
+                        className="p-2 w-14 bg-slate-100 outline-none border-none rounded"
+                        type="text"
+                        placeholder="ID"
+                      />
+                    </td>
+                    <td className="border text-center border-slate-300 px-4 py-2">
+                      <button
+                        onClick={
+                          creating
+                            ? undefined
+                            : () => handleCreate(dr.name, dr.carNumber, dr._id)
+                        }
+                        className="border-none outline-none p-2 rounded bg-emerald-400 text-white hover:bg-emerald-700"
+                      >
+                        {creating ? "Creating" : "Create"}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

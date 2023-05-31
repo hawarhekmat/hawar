@@ -49,25 +49,41 @@ const ProductsList = ({ items }: { items: string }) => {
     }
   };
   return (
-    <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {data &&
-        data.map((company: any) => (
-          <li key={company._id} className="bg-slate-50 rounded p-5">
-            <h1 className="font-semibold text-2xl mb-2">{company.name}</h1>
-            <div className="flex lg:flex-row flex-col gap-5">
-              <button
-                onClick={() => {
-                  handleDelete(company._id);
-                }}
-                type="button"
-                className="bg-red-400 hover:bg-red-800 border-none outline-none  rounded p-2 text-white"
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-    </ul>
+    <div dir="rtl" className="w-full my-5">
+      <table className="border-collapse w-full border border-slate-800">
+        <thead>
+          <tr>
+            <th className="border py-2 px-4 bg-slate-100 text-black/70">
+              Product Name
+            </th>
+            <th className="border py-2 px-4 bg-slate-100 text-black/70">
+              Action
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {data &&
+            data.map((company: any) => (
+              <tr key={company._id}>
+                <td className="border border-slate-300 px-4 py-2">
+                  {company.name}
+                </td>
+                <td className="border border-slate-300 px-4 text-left py-2">
+                  <button
+                    onClick={() => {
+                      handleDelete(company._id);
+                    }}
+                    type="button"
+                    className="bg-red-400 hover:bg-red-800 border-none outline-none  rounded p-2 text-white"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

@@ -104,34 +104,41 @@ const CompanyList = ({ items }: { items: string }) => {
     }
   };
   return (
-    <ul className="flex flex-col gap-3">
-      {data &&
-        data.map((company: any) => (
-          <li key={company._id} className="bg-slate-50 rounded p-5">
-            <h1 className="font-semibold text-2xl mb-2">{company.name}</h1>
-            <div className="flex flex-col md:flex-row gap-4">
-              <button
-                onClick={() => {
-                  handleDelete(company._id);
-                }}
-                type="button"
-                className="bg-red-400 border-none outline-none hover:bg-red-700 rounded text-white p-2"
-              >
-                Delete
-              </button>
-              <button
-                onClick={() => {
-                  handleUpdate(company._id);
-                }}
-                type="button"
-                className="bg-emerald-400 border-none outline-none hover:bg-emerald-700 rounded text-white p-2"
-              >
-                Update name
-              </button>
-            </div>
-          </li>
-        ))}
-    </ul>
+    <div dir="rtl" className="w-full my-5">
+      <table className="border-collapse w-full border border-slate-800">
+        <thead>
+          <tr>
+            <th className="border py-2 px-4 bg-slate-100 text-black/70">
+              Name
+            </th>
+            <th className="border py-2 px-4 bg-slate-100 text-black/70">
+              Action
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {data &&
+            data.map((company: any) => (
+              <tr key={company._id}>
+                <td className="border border-slate-300 px-4 py-2">
+                  {company.name}
+                </td>
+                <td className="border border-slate-300 px-4 text-left py-2">
+                  <button
+                    onClick={() => {
+                      handleUpdate(company._id);
+                    }}
+                    type="button"
+                    className="bg-emerald-400 border-none outline-none hover:bg-emerald-700 rounded text-white p-2"
+                  >
+                    Update name
+                  </button>
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

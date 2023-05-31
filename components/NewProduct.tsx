@@ -66,17 +66,19 @@ const NewProduct = () => {
     setName(e.target.value);
   };
   return (
-    <div className="p-5 rounded shadow bg-slate-100 my-5">
-      <h1 className="mb-3 text-2xl font-semibold">Add a new product</h1>
-      <form onSubmit={handleSubmit} className="flex lg:flex-row flex-col gap-5">
+    <div dir="rtl" className="p-5 rounded shadow bg-slate-100 my-5">
+      <h1 className="mb-3 decoration-solid underline font-semibold">
+        Add products
+      </h1>
+      <form onSubmit={handleSubmit}>
         <Input
           onChange={handleName}
           placeholder="Product name"
           type="text"
           value={name}
         />
-        <button className="p-3 rounded border-none outline-none bg-emerald-500 text-white hover:bg-emerald-700">
-          Add product
+        <button className="py-3 px-8 rounded border-none outline-none bg-emerald-500 text-white hover:bg-emerald-700">
+          Add
         </button>
       </form>
     </div>

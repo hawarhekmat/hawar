@@ -11,7 +11,7 @@ type InputProps = {
 const Input = ({ onChange, placeholder, type, value }: InputProps) => {
   return (
     <input
-      className="border-none outline-none p-3 rounded"
+      className="border-none my-2 block w-full outline-none p-3 rounded"
       type={type}
       placeholder={placeholder}
       value={value}

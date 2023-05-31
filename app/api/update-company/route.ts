@@ -3,6 +3,8 @@ import { connectToDatabase } from "@/utils/database";
 import Company from "@/models/company";
 import User from "@/models/driver";
 
+export const revalidate = 0;
+
 export async function POST(request: NextRequest) {
     try {
         const { name, logo, id } = await request.json();

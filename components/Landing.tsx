@@ -2,10 +2,8 @@ import ProductsList from "@/models/list";
 import { connectToDatabase } from "@/utils/database";
 import Link from "next/link";
 import React from "react";
-import DeleteRecord from "./DeleteRecord";
-import Image from "next/image";
 import ListRecord from "./ListRecord";
-
+export const revalidate = 0;
 async function getListsForToday() {
   try {
     await connectToDatabase();
@@ -32,7 +30,7 @@ const Landing = async () => {
 
   if (data.length === 0) {
     return (
-      <div className="my-2">
+      <div className="my-5">
         <h1>
           There are no lists for today!, go and{" "}
           <Link className="text-sky-500" href={`/new-list`}>

@@ -2,7 +2,7 @@ import User from "@/models/driver";
 import { connectToDatabase } from "@/utils/database";
 import React from "react";
 import DriverList from "./DriverList";
-
+export const revalidate = 0;
 async function getDrivers() {
   try {
     await connectToDatabase();
@@ -19,7 +19,7 @@ const LoadDrivers = async () => {
   if (data && data.length === 0) {
     return (
       <div className="text-center my-5 p-1">
-        <h1 className="text-xl text-white font-semibold">
+        <h1 className="text-xl font-semibold">
           There are no drivers registered.
         </h1>
       </div>
@@ -27,9 +27,9 @@ const LoadDrivers = async () => {
   }
 
   return (
-    <div className="bg-slate-100 shadow my-5 p-5 rounded ">
-      <DriverList items={JSON.stringify(data)} />
-    </div>
+    // <div className="bg-slate-100 shadow my-5 p-5 rounded ">
+    <DriverList items={JSON.stringify(data)} />
+    /* </div> */
   );
 };
 

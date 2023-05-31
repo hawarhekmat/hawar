@@ -2,6 +2,8 @@ import { NextResponse, NextRequest } from "next/server";
 import { connectToDatabase } from "@/utils/database";
 import User from "@/models/driver";
 
+export const revalidate = 0;
+
 export async function POST(request: NextRequest) {
     try {
         const { name, city, carNumber, company } = await request.json();

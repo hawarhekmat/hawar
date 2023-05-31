@@ -8,7 +8,7 @@ export async function connectToDatabase() {
         return;
     }
     try {
-        await mongoose.connect(process.env.DATABASE_URL as string, {
+        await mongoose.connect("mongodb://localhost:27017", {
             dbName: 'project',
         })
         isConnected = true;

@@ -2,6 +2,8 @@ import { NextResponse, NextRequest } from "next/server";
 import { connectToDatabase } from "@/utils/database";
 import Product from "@/models/product";
 
+export const revalidate = 0;
+
 export async function POST(request: NextRequest) {
     try {
         const { name } = await request.json();

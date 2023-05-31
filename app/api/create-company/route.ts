@@ -2,6 +2,8 @@ import { NextResponse, NextRequest } from "next/server";
 import { connectToDatabase } from "@/utils/database";
 import Company from "@/models/company";
 
+export const revalidate = 0;
+
 export async function POST(request: NextRequest) {
     try {
         const { name, logo } = await request.json();

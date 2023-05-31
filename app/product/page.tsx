@@ -1,7 +1,7 @@
 import LoadProduct from "@/components/LoadProduct";
 import NewProduct from "@/components/NewProduct";
 import React from "react";
-
+export const revalidate = 0;
 const Product = async () => {
   return (
     <section>

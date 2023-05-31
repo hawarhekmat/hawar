@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.pdf-button {
+  @apply p-2 rounded outline-none border-none text-white bg-slate-600 hover:bg-slate-800;
+}
+
+.center-pdf {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -135,14 +135,13 @@ const NewDriver = () => {
   }, []);
 
   return (
-    <div className="p-5 rounded bg-slate-100 shadow my-8">
+    <div dir="rtl" className="p-5 rounded bg-slate-100 shadow my-8">
       <h1 className="text-2xl font-semibold my-3">Add a new driver</h1>
-      <h1 className="text-md">Attach it to a company</h1>
       {loading ? (
         <h1>Loading companies</h1>
       ) : companies?.length! > 0 ? (
         <select
-          className="p-2 rounded my-3"
+          className="p-2 block w-full rounded my-3"
           value={selectedCompany}
           onChange={handleSelectChange}
         >
@@ -165,10 +164,7 @@ const NewDriver = () => {
           one.
         </h1>
       )}
-      <form
-        onSubmit={handleSubmit}
-        className="flex xl:flex-row flex-col gap-5 "
-      >
+      <form onSubmit={handleSubmit}>
         <Input
           onChange={handleName}
           placeholder="Name"

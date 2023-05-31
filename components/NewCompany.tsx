@@ -6,20 +6,16 @@ import { useToast } from "@chakra-ui/react";
 const NewCompany = () => {
   const toast = useToast();
   const [company, setCompany] = useState("");
-  const [logo, setLogo] = useState("");
   const router = useRouter();
   const handleCompany = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setCompany(e.target.value);
   };
-  const handleLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLogo(e.target.value);
-  };
 
   const createCompany = async () => {
-    if (company === "" || logo === "") {
+    if (company === "") {
       toast({
         title: "Alert",
-        description: "Company name and banner path is required.",
+        description: "Company name is required.",
         status: "info",
         duration: 9000,
         isClosable: true,
@@ -36,7 +32,7 @@ const NewCompany = () => {
         },
         body: JSON.stringify({
           name: company,
-          logo,
+          logo: `${company}.jpeg`,
         }),
       });
 
@@ -67,7 +63,6 @@ const NewCompany = () => {
         return;
       }
       setCompany("");
-      setLogo("");
       router.refresh();
     } catch (error) {
       toast({
@@ -82,26 +77,21 @@ const NewCompany = () => {
   };
 
   return (
-    <div className="bg-slate-100 mt-10 shadow rounded p-4 ">
-      <h1 className="font-semibold mb-5 text-xl">Company details</h1>
-      <div className="flex flex-col md:flex-row gap-2">
+    <div dir="rtl" className="bg-slate-100 mt-10 shadow rounded p-4 ">
+      <h1 className="font-semibold decoration-solid underline mb-5 text-xl">
+        Add companies
+      </h1>
+      <div>
         <input
-          className="border-none outline-none p-3 rounded"
+          className="border-none outline-none mb-5 p-3 block w-full rounded"
           type="text"
           placeholder="Company name"
           value={company}
           onChange={handleCompany}
         />
-        <input
-          className="border-none outline-none p-3 rounded "
-          type="text"
-          placeholder="Banner path"
-          value={logo}
-          onChange={handleLogo}
-        />
         <button
           onClick={createCompany}
-          className="border-none outline-none p-3 rounded bg-white hover:bg-gray-200"
+          className="py-3 px-8 rounded border-none outline-none bg-emerald-500 text-white hover:bg-emerald-700"
           type="button"
         >
           Add

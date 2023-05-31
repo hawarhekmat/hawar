@@ -1,6 +1,8 @@
 import ProductsList from "@/models/list";
 import { NextResponse, NextRequest } from "next/server";
 
+export const revalidate = 0;
+
 export async function POST(request: NextRequest) {
     try {
         const { id } = await request.json()

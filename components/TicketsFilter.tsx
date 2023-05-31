@@ -6,10 +6,11 @@ import { useToast } from "@chakra-ui/react";
 import { getDayOfWeek } from "@/utils/date";
 import DeleteRecord from "./DeleteRecord";
 import { useRouter } from "next/navigation";
+import PrintAndPDFAll from "./PrintAndPDFAll";
 
 const TicketsFilter = () => {
-  const currentDate = new Date().toISOString().split("T")[0];
-  const [selectedDate, setSelectedDate] = useState(currentDate);
+  const [firstDate, setFirstDate] = useState("");
+  const [lastDate, setLastDate] = useState("");
   const [company, setCompany] = useState<string[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -67,14 +68,42 @@ const TicketsFilter = () => {
     printWindow?.document.close();
   };
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedDate(e.target.value);
+  const handleFirstDate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFirstDate(e.target.value);
+    console.log(firstDate);
+  };
+  const handleLastDate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLastDate(e.target.value);
+    console.log(lastDate);
   };
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCompany(e.target.value);
   };
 
   const getProducts = async () => {
+    if (firstDate === "" || lastDate === "") {
+      toast({
+        title: "Alert",
+        description: `Please enter first date and last date.`,
+        status: "info",
+        duration: 9000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+      return;
+    }
+    if (selectedCompany === "select") {
+      toast({
+        title: "Alert",
+        description: `Please select a company`,
+        status: "info",
+        duration: 9000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch("/api/get-filter", {
@@ -85,7 +114,8 @@ const TicketsFilter = () => {
         cache: "no-cache",
         body: JSON.stringify({
           company: selectedCompany,
-          date: selectedDate,
+          firstDate,
+          lastDate,
         }),
       });
 
@@ -224,6 +254,7 @@ const TicketsFilter = () => {
     try {
       const response = await fetch("/api/pdf", {
         method: "POST",
+        cache: "no-cache",
         headers: {
           "Content-Type": "application/json",
         },
@@ -288,28 +319,39 @@ const TicketsFilter = () => {
       }
     };
     getCompanies();
-    getProducts();
   }, []);
 
   return (
-    <div>
+    <div dir="rtl">
       <div className=" bg-slate-100 rounded p-3 shadow-md">
         <h1 className="my-1 mb-3 text-xl">Search for created lists.</h1>
-        <div className="flex flex-col gap-3 md:flex-row">
-          <div className="w-full md:w-max self-center">
-            <input
-              className="w-full border-none outline-none p-3 rounded"
-              type="date"
-              onChange={handleDateChange}
-              value={selectedDate}
-            />
+        <div className="flex flex-col gap-3">
+          <div className="w-full">
+            <div>
+              <h1 className="text-lg my-3">First Date</h1>
+              <input
+                className="border-none block w-full outline-none p-3 rounded"
+                type="datetime-local"
+                value={firstDate}
+                onChange={handleFirstDate}
+              />
+            </div>
+            <div>
+              <h1 className="text-lg my-3">Last Date</h1>
+              <input
+                value={lastDate}
+                onChange={handleLastDate}
+                className="border-none block w-full outline-none p-3 rounded"
+                type="datetime-local"
+              />
+            </div>
           </div>
-          <div className="w-full md:w-max self-center">
+          <div className="w-full">
             {loadingCompany ? (
               <h1>Loading companies</h1>
             ) : company?.length! > 0 ? (
               <select
-                className="p-3 rounded w-full"
+                className="p-3 block rounded w-full"
                 value={selectedCompany}
                 onChange={handleSelectChange}
               >
@@ -332,9 +374,9 @@ const TicketsFilter = () => {
               </Link>
             )}
           </div>
-          <div className="w-full md:w-max self-center">
+          <div className="w-full">
             <button
-              className="p-2 w-full rounded transition-shadow duration-150 bg-white hover:shadow-md text-black/80"
+              className="py-3 px-8 rounded transition-shadow duration-150 bg-white hover:shadow-md text-black/80"
               onClick={getProducts}
             >
               Search
@@ -342,71 +384,69 @@ const TicketsFilter = () => {
           </div>
         </div>
       </div>
-      <div className="p-3 bg-slate-100 mt-5">
+      <div className="mt-5">
         {loading ? (
-          <h1>Loading data.</h1>
+          <h1>Loading data</h1>
         ) : filteredData.length > 0 ? (
-          <ul className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {filteredData.map((item: any) => (
-              <li className="rounded p-3 bg-white shadow-md" key={item._id}>
-                <h1 className="text-xl">Company: {item.company}</h1>
-                <p className="text-md my-2">Product: {item.products}</p>
-                <p className="text-md">Drivers: {item.drivers.join(", ")}</p>
-                <p className="text-md my-2">
-                  Time: {`${item.h}:${item.m}:${item.s}`}
-                </p>
-                <p className="text-md">
-                  Date: {item.month}/{item.dayOfMonth}/{item.year} on{" "}
-                  {getDayOfWeek(item.dayOfWeek)}
-                </p>
-
-                <div className="my-2 flex flex-col md:flex-row gap-2 md:gap-5">
-                  <button
-                    className="p-2 hover:bg-red-700 rounded bg-red-400 text-white border-none outline-none"
-                    onClick={() => {
-                      handleDelete(item._id);
-                    }}
-                  >
-                    {loadingDelete ? "Deleting record" : "Delete record"}
-                  </button>
-                  <button
-                    onClick={
-                      loadingPDF
-                        ? undefined
-                        : () => {
-                            handleExportPDF(
-                              `${item.company} ${item.month} ${item.dayOfMonth} ${item.year}`,
-                              item.company,
-                              item.products,
-                              item.year,
-                              item.month,
-                              item.dayOfMonth,
-                              item.dayOfWeek,
-                              item.drivers,
-                              item.h,
-                              item.m,
-                              item.s
-                            );
-                          }
-                    }
-                    className="p-2 bg-sky-300 hover:bg-sky-500 rounded text-white border-none outline-none"
-                    type="button"
-                  >
-                    {loadingPDF ? "Exporting to PDF" : "Export to PDF"}
-                  </button>
-                  <button
-                    className="p-2 hover:bg-slate-600 rounded bg-slate-400 text-white border-none outline-none"
-                    type="button"
-                    onClick={handlePrint}
-                  >
-                    Print
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <div>
+            <div className="my-4">
+              <PrintAndPDFAll data={filteredData} />
+            </div>
+            <table className="border-collapse w-full border border-slate-800">
+              <thead>
+                <tr>
+                  <th className="border py-2 px-4 bg-slate-100 text-black/70">
+                    Company
+                  </th>
+                  <th className="border py-2 px-4 bg-slate-100 text-black/70">
+                    Product
+                  </th>
+                  <th className="border py-2 px-4 bg-slate-100 text-black/70">
+                    Date
+                  </th>
+                  <th className="border py-2 px-4 bg-slate-100 text-black/70">
+                    Time
+                  </th>
+                  <th className="border py-2 px-4 bg-slate-100 text-black/70">
+                    Driver Name
+                  </th>
+                  <th className="border py-2 px-4 bg-slate-100 text-black/70">
+                    Driver Queue
+                  </th>
+                  <th className="border py-2 px-4 bg-slate-100 text-black/70">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredData.map((list: any) => (
+                  <tr key={list._id}>
+                    <td className="border border-slate-300 px-4 py-2">
+                      {list.company}
+                    </td>
+                    <td className="border border-slate-300 px-4 py-2">
+                      {list.products}
+                    </td>
+                    <td className="border border-slate-300 px-4 py-2">{`${list.month}/${list.dayOfMonth}/${list.year}`}</td>
+                    <td className="border border-slate-300 px-4 py-2">
+                      {list.time}
+                    </td>
+                    <td className="border border-slate-300 px-4 py-2">
+                      {list.drivers.join(", ")}
+                    </td>
+                    <td className="border border-slate-300 px-4 py-2">
+                      {list.driverID}
+                    </td>
+                    <td className="border border-slate-300 px-4 text-right py-2">
+                      <DeleteRecord rData={list} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <h1>There are no listed based on selected filters.</h1>
+          <h1>No data found based on filters.</h1>
         )}
       </div>
     </div>

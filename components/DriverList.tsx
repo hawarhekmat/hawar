@@ -145,9 +145,9 @@ const DriverList = ({ items }: DriverProps) => {
   }, []);
 
   return (
-    <div>
+    <div dir="rtl" className="my-5">
       <select
-        className="p-2 rounded my-3"
+        className="p-2 bg-slate-100 block w-full rounded my-3"
         value={selectedCompany}
         onChange={handleSelectChange}
       >
@@ -161,49 +161,70 @@ const DriverList = ({ items }: DriverProps) => {
             );
           })}
       </select>
-      <ul className="flex flex-col gap-3 relative  max-h-80 overflow-y-auto">
-        {data.length > 0 &&
-          filteredData.map((d: any) => (
-            <li key={d._id} className="bg-slate-50 shadow-sm p-5">
-              <h1>
-                Name: <span className="text-base">{d.name}</span>
-              </h1>
-
-              <h1 className="my-1">
-                City: <span>{d.city}</span>
-              </h1>
-
-              <h1 className="mb-1">
-                Car number: <span>{d.carNumber}</span>
-              </h1>
-              <h1>
-                Works for <span>{d.company}</span> company
-              </h1>
-              <ul className="flex flex-col md:flex-row gap-3 mt-2">
-                <li>
-                  <button
-                    onClick={() => {
-                      handleUpdateName(d._id);
-                    }}
-                    className="p-2 border-none outline-none rounded text-white hover:bg-emerald-700 bg-emerald-500"
-                  >
-                    Update name
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => {
-                      handleDelete(d._id);
-                    }}
-                    className="p-2 border-none outline-none text-white hover:bg-red-800 rounded bg-red-400"
-                  >
-                    Delete
-                  </button>
-                </li>
-              </ul>
-            </li>
-          ))}
-      </ul>
+      <table className="border-collapse w-full border border-slate-800">
+        <thead>
+          <tr>
+            <th className="border py-2 px-4 bg-slate-100 text-black/70">
+              Driver Name
+            </th>
+            <th className="border py-2 px-4 bg-slate-100 text-black/70">
+              Driver City
+            </th>
+            <th className="border py-2 px-4 bg-slate-100 text-black/70">
+              Driver Car Number
+            </th>
+            <th className="border py-2 px-4 bg-slate-100 text-black/70">
+              Driver Company
+            </th>
+            <th className="border py-2 px-4 bg-slate-100 text-black/70">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.length > 0 &&
+            filteredData.map((driver: any) => (
+              <tr key={driver._id}>
+                <td className="border border-slate-300 px-4 py-2">
+                  {driver.name}
+                </td>
+                <td className="border border-slate-300 px-4 py-2">
+                  {driver.city}
+                </td>
+                <td className="border border-slate-300 px-4 py-2">
+                  {driver.carNumber}
+                </td>
+                <td className="border border-slate-300 px-4 py-2">
+                  {driver.company}
+                </td>
+                <td className="border border-slate-300 px-4 text-right py-2">
+                  <ul className="flex items-center justify-evenly">
+                    <li>
+                      <button
+                        onClick={() => {
+                          handleUpdateName(driver._id);
+                        }}
+                        className="p-2 border-none outline-none rounded text-white hover:bg-emerald-700 bg-emerald-500"
+                      >
+                        Update name
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        onClick={() => {
+                          handleDelete(driver._id);
+                        }}
+                        className="p-2 border-none outline-none text-white hover:bg-red-800 rounded bg-red-400"
+                      >
+                        Delete
+                      </button>
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
     </div>
   );
 };
