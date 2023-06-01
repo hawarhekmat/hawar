@@ -1,7 +1,8 @@
-import Nav from "@/components/Nav";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { Providers } from "./providers";
+import AuthContextProvider from "@/providers/auth";
+import Nav from "@/components/Nav";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,12 +21,14 @@ export default function RootLayout({
       <body
         className={`${inter.className} bg-gradient-to-r from-gray-50 to-white min-h-screen`}
       >
-        <Providers>
-          <Nav />
-          <main>
-            <div className="container mx-auto px-24">{children}</div>
-          </main>
-        </Providers>
+        <AuthContextProvider>
+          <Providers>
+            <Nav />
+            <main>
+              <div className="container mx-auto px-24">{children}</div>
+            </main>
+          </Providers>
+        </AuthContextProvider>
       </body>
     </html>
   );

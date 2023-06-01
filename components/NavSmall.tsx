@@ -31,9 +31,10 @@ const NavSmall = () => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>HAWAR</DrawerHeader>
-
           <DrawerBody display="flex" flexDir="column" gap="3">
+            <Link className="text-2xl font-sans font-semibold" href={`/home`}>
+              HAWAR
+            </Link>
             <Link className="hover:text-sky-500" href={"/new-list"}>
               New list
             </Link>

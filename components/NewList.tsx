@@ -139,7 +139,14 @@ const NewList = () => {
         return;
       }
       setCreating(false);
-      router.replace("/");
+      toast({
+        title: "Success",
+        description: "List created.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom-right",
+      });
     } catch (error) {
       setCreating(false);
       toast({
@@ -368,7 +375,7 @@ const NewList = () => {
                         }
                         className="border-none outline-none p-2 rounded bg-emerald-400 text-white hover:bg-emerald-700"
                       >
-                        {creating ? "Creating" : "Create"}
+                        Create
                       </button>
                     </td>
                   </tr>

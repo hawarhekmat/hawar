@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "K24 Kurdish Light Font";
+  src: url("/K24KurdishLight-Light.ttf");
+}
+
+* {
+  font-family: "K24 Kurdish Light Font";
+}
+
 .pdf-button {
   @apply p-2 rounded outline-none border-none text-white bg-slate-600 hover:bg-slate-800;
 }

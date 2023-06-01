@@ -9,13 +9,13 @@ const CompanyList = ({ items }: { items: string }) => {
   const data = JSON.parse(items);
 
   const handleUpdate = async (id: string) => {
-    const name = prompt("Enter a new name: ");
-    const logo = prompt("Enter a new banner path: ");
+    const name = prompt("ناوێکی نوی");
+    const logo = prompt("ناوی لۆگۆ");
 
     if (name === null || logo === null) {
       toast({
-        title: "Alert",
-        description: "Please provide company name and banner path.",
+        title: "ئاگادری",
+        description: "تکایە ناوی کۆمپانیا بنوسە",
         status: "info",
         duration: 9000,
         isClosable: true,

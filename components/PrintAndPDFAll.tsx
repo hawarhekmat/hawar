@@ -47,6 +47,15 @@ const PrintAndPDFAll: React.FC<PrintAndPDFAllProps> = ({
         <head>
           <title>Print</title>
           <style>
+            @font-face {
+                font-family: 'K24 Kurdish Light Font';
+                src: url('K24KurdishLight-Light.ttf');
+              }
+
+              * {
+                font-family: 'K24 Kurdish Light Font';
+              }
+
             @media print {
 
               @page {
@@ -75,7 +84,7 @@ const PrintAndPDFAll: React.FC<PrintAndPDFAllProps> = ({
               #content-to-print, #content-to-print * {
                 visibility: visible;
               }
-              
+
 
               #content-to-print .end-text {
                 text-align: left;
@@ -92,8 +101,8 @@ const PrintAndPDFAll: React.FC<PrintAndPDFAllProps> = ({
           <div id="content-to-print" dir="rtl">
             <img src='/${list.companyLogo}' />
             <h1 class='text-center'>Queue(${list.driverID})</h1>
-            <p>Company name: ${list.company}</p>
-            <p>Driver name: ${list.drivers.join(", ")}</p>
+            <p>ناوی کۆمپانیا: ${list.company}</p>
+            <p>ناوی سایەق: ${list.drivers.join(", ")}</p>
             <p>Car number: ${list.carNumber}</p>
             <p>Product: ${list.products}</p>
             <p>Date: ${list.month}/${list.dayOfMonth}/${list.year}</p>
