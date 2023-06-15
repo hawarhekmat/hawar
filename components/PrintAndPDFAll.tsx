@@ -13,8 +13,8 @@ interface PrintAndPDFAllProps {
 
 const PrintAndPDFAll: React.FC<PrintAndPDFAllProps> = ({
   data,
-  printText = "Print All",
-  generateText = "Export All To PDF",
+  printText = "چاپکردنی گشتی",
+  generateText = "ALL to PDF",
 }) => {
   const date = new Date();
   const fileName = `${
@@ -25,8 +25,8 @@ const PrintAndPDFAll: React.FC<PrintAndPDFAllProps> = ({
 
   const printAll = (arr: any[]) => {
     const newWindow = window.open("", "_blank");
-    const d = arr.map((item: any) => {
-      return generatePageContent(item);
+    const d = arr.map((item: any, index) => {
+      return generatePageContent(item, index);
     });
     d.forEach((item: any) => {
       newWindow?.document.write(item);
@@ -40,75 +40,80 @@ const PrintAndPDFAll: React.FC<PrintAndPDFAllProps> = ({
     });
   };
 
-  const generatePageContent = (list: any) => {
+  const generatePageContent = (list: any, index:number) => {
     return `
       <!DOCTYPE html>
       <html>
         <head>
           <title>Print</title>
           <style>
-            @font-face {
-                font-family: 'K24 Kurdish Light Font';
-                src: url('K24KurdishLight-Light.ttf');
-              }
+          @font-face {
+            font-family: 'K24 Kurdish Light Font';
+            src: url('K24KurdishLight-Light.ttf');
+          }
 
-              * {
-                font-family: 'K24 Kurdish Light Font';
-              }
+          * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: 'K24 Kurdish Light Font';
+        }
+        
+        body {
+          height: 100vh;
+           
+        }
 
-            @media print {
+        .content-to-print-${index} {
+          min-height: 100vh;
+          padding-top: 2rem;
+          display: flex;
+          align-items: start;
+          justify-content: space-around;
+          gap: 1.5rem;
+          flex-direction: column;
+        }
 
-              @page {
-                size: A5;
-                margin: 0;
-              }
+        .banner {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: red;
+          width: 100%;
+          font-size: 1.5rem;
+        }
 
-              body * {
-                visibility: hidden;
-              }
-              #content-to-print {
-                min-height: 100vh;
-              }
+        .text-center {
+          width: 100%;
+          text-align: center;
+          color: red;
+        }
 
-              #content-to-print img {
-                width: 100%;
-                height: 200px;
-                display: block;
-              }
+        p {
+          font-size: 1.8rem;
+        }
 
-              #content-to-print p{
-                margin: 35px 5px;
-                font-size: 2rem;
-              }
-
-              #content-to-print, #content-to-print * {
-                visibility: visible;
-              }
-
-
-              #content-to-print .end-text {
-                text-align: left;
-              }
-
-              .text-center {
-                text-align: center;
-                color: red;
-              }
-            }
+        .end-text {
+          width: 100%;
+          text-align: left;
+        }
+          
           </style>
         </head>
         <body>
-          <div id="content-to-print" dir="rtl">
-            <img src='/${list.companyLogo}' />
-            <h1 class='text-center'>Queue(${list.driverID})</h1>
+          <div class="content-to-print-${index}" dir="rtl">
+          <div class='banner'>
+          <h1 class='text-company'>${list.company}</h1>
+          </div>
+            <h1 class='text-center'>نۆرە(${list.driverID})</h1>
             <p>ناوی کۆمپانیا: ${list.company}</p>
             <p>ناوی سایەق: ${list.drivers.join(", ")}</p>
-            <p>Car number: ${list.carNumber}</p>
-            <p>Product: ${list.products}</p>
-            <p>Date: ${list.month}/${list.dayOfMonth}/${list.year}</p>
-            <p>Time: ${list.time}</p>
+            <p>ژمارەی تابلۆ: ${list.carNumber}</p>
+            <p>بەرهەم: ${list.products}</p>
+            <p>بەروار: ${list.month}/${list.dayOfMonth}/${list.year}</p>
+            <p>کات: ${list.time}</p>
             <div class='end-text'>
-              <p>Marker</p>
+              <p>چاودێری گۆڕەپان</p>
             </div>
           </div>
           <script>
